@@ -283,6 +283,10 @@ def start_production():
     logger.info(f"  Fiabilidad mín:  {config.MIN_RELIABILITY}%")
     logger.info(f"  Combo mín:       {config.COMBO_RELIABILITY}%")
 
+    # Arrancar listener de comandos
+    from bot_sender import start_command_listener
+    start_command_listener()
+
     # Thread 1: carga diaria
     t1 = threading.Thread(
         target=run_daily_at,
