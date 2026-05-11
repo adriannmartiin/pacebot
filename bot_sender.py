@@ -1,6 +1,6 @@
 """
 bot_sender.py
-Gestiona el envío de mensajes y el listener de comandos.
+Gestiona envío de mensajes y listener de comandos.
 """
 
 import logging
@@ -42,7 +42,7 @@ async def _send_async(text: str):
 
 
 def send_message(text: str):
-    """Envía un mensaje al canal."""
+    """Envia un mensaje al canal."""
     try:
         asyncio.run_coroutine_threadsafe(
             _send_async(text), _get_loop()
@@ -50,10 +50,6 @@ def send_message(text: str):
         logger.info("Mensaje enviado")
     except Exception as e:
         logger.error(f"Error enviando mensaje: {e}")
-        try:
-            asyncio.run(_send_async(text))
-        except Exception as e2:
-            logger.error(f"Fallback también falló: {e2}")
 
 
 def start_command_listener():
@@ -62,17 +58,27 @@ def start_command_listener():
         cmd_status, cmd_scan48, cmd_hoy, cmd_stats, cmd_proximas
     )
 
-    def _run():
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        app = Application.builder().token(config.TELEGRAM_TOKEN).build()
+    async def _run_app():
+        app = (
+            Application.builder()
+            .token(config.TELEGRAM_TOKEN)
+            .build()
+        )
         app.add_handler(CommandHandler("status",   cmd_status))
         app.add_handler(CommandHandler("scan48",   cmd_scan48))
         app.add_handler(CommandHandler("hoy",      cmd_hoy))
         app.add_handler(CommandHandler("stats",    cmd_stats))
         app.add_handler(CommandHandler("proximas", cmd_proximas))
         logger.info("Comandos: /status /scan48 /hoy /stats /proximas")
-        app.run_polling(close_loop=False)
+        await app.run_polling(stop_signals=None)
+
+    def _run():
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        try:
+            loop.run_until_complete(_run_app())
+        except Exception as e:
+            logger.error(f"Error listener: {e}")
 
     t = threading.Thread(target=_run, daemon=True, name="cmd-listener")
     t.start()
