@@ -284,8 +284,9 @@ def start_production():
     logger.info(f"  Combo mín:       {config.COMBO_RELIABILITY}%")
 
     # Arrancar listener de comandos
-    from bot_sender import start_command_listener
-    start_command_listener()
+    # Listener de comandos corre en proceso separado (listener.py)
+
+
 
     # Thread 1: carga diaria
     t1 = threading.Thread(
