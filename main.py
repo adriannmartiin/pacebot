@@ -19,6 +19,7 @@ import logging
 import argparse
 import threading
 import time
+import os
 from datetime import datetime, timedelta, timezone
 
 import config
@@ -42,6 +43,9 @@ from formatter import (
 )
 from bot_sender import send_message
 from scheduler import game_scheduler, run_daily_at, run_weekly_friday
+
+# Crear carpeta logs si no existe (necesario en Railway)
+os.makedirs("logs", exist_ok=True)
 
 logging.basicConfig(
     level=logging.INFO,
