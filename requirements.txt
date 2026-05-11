@@ -1,0 +1,8 @@
+requests==2.31.0
+python-telegram-bot==20.7
+python-dotenv==1.0.0
+pandas==2.1.4
+numpy==1.26.2
+nba_api==1.4.1
+schedule==1.2.1
+pytz==2023.3.post1
